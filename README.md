@@ -1,24 +1,47 @@
 # BrokerCalc Pro
 
-**BrokerCalc Pro** is a modern multi-broker P/L and tax calculation SaaS app built with Next.js, Tailwind CSS, and Prisma. Users can connect multiple broker accounts, track their trades, calculate profits/losses, and manage tax reports.
+**BrokerCalc Pro** is a modern broker-agnostic P/L and tax calculation app built with Next.js, Tailwind CSS, and Prisma. Users can calculate brokerage charges, track their trades, calculate profits/losses, and manage tax reports across multiple Indian brokers.
 
 ## 🛠 Tech Stack
 
-- **Frontend:** Next.js 14, React 18, Tailwind CSS, Headless UI, Heroicons
+- **Frontend:** Next.js 14, React 18, Tailwind CSS
 - **Backend:** Next.js API routes, Node.js 20, Prisma ORM
 - **Database:** SQLite (development), PostgreSQL (production ready)
-- **Authentication:** JWT-based auth
-- **File Export:** CSV/XLSX (SheetJS)
-- **Charts:** Recharts / ApexCharts (planned)
+- **Authentication:** JWT-based auth with bcrypt password hashing
+- **Validation:** Zod for runtime type checking and validation
+- **State Management:** React Hooks and Context
+- **Future Plans:** CSV/XLSX export, Recharts/ApexCharts integration
 
-## ⚡ Features (In Progress)
+## ⚡ Features
 
-- User signup & login with JWT authentication
-- Password hashing using bcrypt
-- API routes for protected dashboard data
-- Seed script to create initial test user
+### Implemented
+- **Authentication**
+  - Secure signup & login with JWT
+  - Password hashing with bcrypt
+  - Protected API routes with middleware
+  
+- **Broker Integration**
+  - Support for Zerodha and Groww
+  - Accurate brokerage calculations
+  - Detailed charge breakdowns (STT, GST, etc.)
+  
+- **Input Validation**
+  - Strong schema validation with Zod
+  - Stock symbol format validation
+  - Trade input validation (quantity, price, etc.)
 
-_(More features like broker integration, calculations, and analytics will be added step by step.)_
+### In Progress
+- Stock symbol autocomplete with NSE/BSE data
+- Order management and tracking
+- P&L calculations with broker charges
+- Dashboard analytics
+- Tax report generation
+
+### Planned
+- Portfolio analytics and visualization
+- Export functionality (CSV/XLSX)
+- More broker integrations
+- Advanced tax calculations (STCG/LTCG)
 
 ## 🚀 Getting Started
 
@@ -59,10 +82,55 @@ npm run dev
 
 Visit: http://localhost:3000
 
-📝 Notes
+## 🏗 Project Structure
 
-API routes are located under src/app/api/
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   │   ├── broker/       # Broker management
+│   │   ├── calculations/ # P&L calculations
+│   │   ├── login/       # Authentication
+│   │   ├── orders/      # Order management
+│   │   ├── signup/      # User registration
+│   │   └── symbols/     # Stock symbols data
+│   ├── login/           # Login page
+│   └── signup/          # Signup page
+├── components/           # Reusable components
+│   ├── Navigation.tsx   # Main navigation
+│   └── StockSymbolInput.tsx
+├── hooks/               # Custom React hooks
+│   └── useAuth.ts      # Authentication hook
+├── middleware/          # API middleware
+│   └── auth.ts         # JWT authentication
+└── utils/              # Utility functions
+    ├── brokerage.ts    # Brokerage calculations
+    ├── error-handler.ts # Error handling
+    └── validation.ts   # Zod schemas
+```
 
-Authentication is JWT-based for future protected endpoints
+## 📝 Development Notes
 
-SQLite is used for development; switch to PostgreSQL for production
+### API Routes
+- All routes under `src/app/api/`
+- Protected by JWT authentication middleware
+- Proper error handling and validation
+- Consistent response format
+
+### Authentication
+- JWT-based with 1-hour expiry
+- Bcrypt for password hashing
+- Protected routes and API endpoints
+- Client-side auth state management
+
+### Database
+- SQLite for development
+- PostgreSQL recommended for production
+- Prisma migrations for schema management
+- Proper indexing on frequently queried fields
+
+### Validation
+- Zod schemas for all inputs
+- Stock symbol format validation
+- Price and quantity validation
+- Broker-specific rules
