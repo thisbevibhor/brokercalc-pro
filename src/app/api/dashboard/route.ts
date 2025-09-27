@@ -1,42 +1,97 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import { paginationSchema } from "@/utils/validation";
+import { handleApiError } from "@/utils/error-handler";
+import { authenticateRequest, AuthRequest } from "@/middleware/auth";
 
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
 
-export async function GET(req: Request) {
+export async function GET(req: AuthRequest) {
 	try {
-		const authHeader = req.headers.get("authorization");
-		if (!authHeader || !authHeader.startsWith("Bearer ")) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+		// 1. Authenticate user
+		await authenticateRequest(req);
+		const userId = req.user!.userId;
 
-		// Trim token to remove spaces/newlines
-		const token = authHeader.split(" ")[1].trim();
+		// 2. Parse and validate pagination parameters
+		const url = new URL(req.url);
+		const page = parseInt(url.searchParams.get("page") || "1");
+		const limit = parseInt(url.searchParams.get("limit") || "10");
 
-		let decoded: string | jwt.JwtPayload;
-		try {
-			decoded = jwt.verify(token, JWT_SECRET);
-		} catch {
-			return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-		}
+		const validatedPagination = paginationSchema.parse({ page, limit });
+		const skip = (validatedPagination.page - 1) * validatedPagination.limit;
 
-		// Ensure payload has userId
-		if (typeof decoded === "string" || !("userId" in decoded)) {
-			return NextResponse.json({ error: "Invalid token payload" }, { status: 401 });
-		}
+		// 3. Fetch dashboard data
+		const [recentCalculations, totalCalculations, recentOrders, totalOrders, aggregatedStats] = await Promise.all([
+			// Recent calculations
+			prisma.calculation.findMany({
+				where: { userId },
+				orderBy: { createdAt: "desc" },
+				take: validatedPagination.limit,
+				skip,
+				include: {
+					orders: {
+						include: {
+							broker: {
+								select: { brokerName: true },
+							},
+						},
+					},
+				},
+			}),
+			// Total calculations count
+			prisma.calculation.count({
+				where: { userId },
+			}),
+			// Recent orders
+			prisma.order.findMany({
+				where: { userId },
+				orderBy: { date: "desc" },
+				take: 5,
+				include: {
+					broker: {
+						select: { brokerName: true },
+					},
+				},
+			}),
+			// Total orders count
+			prisma.order.count({
+				where: { userId },
+			}),
+			// Aggregated statistics
+			prisma.calculation.aggregate({
+				where: { userId },
+				_sum: {
+					grossPL: true,
+					netPL: true,
+					buyTotal: true,
+					sellTotal: true,
+					buyCharges: true,
+					sellCharges: true,
+				},
+			}),
+		]);
 
-		const userId = decoded.userId as string;
-
-		// Fetch calculations (empty for now)
-		const calculations = await prisma.calculation.findMany({
-			where: { userId },
+		// 4. Prepare response
+		return NextResponse.json({
+			recentCalculations,
+			recentOrders,
+			statistics: {
+				totalOrders,
+				totalCalculations,
+				totalGrossPL: aggregatedStats._sum.grossPL || 0,
+				totalNetPL: aggregatedStats._sum.netPL || 0,
+				totalBuyAmount: aggregatedStats._sum.buyTotal || 0,
+				totalSellAmount: aggregatedStats._sum.sellTotal || 0,
+				totalCharges: (aggregatedStats._sum.buyCharges || 0) + (aggregatedStats._sum.sellCharges || 0),
+			},
+			pagination: {
+				total: totalCalculations,
+				page: validatedPagination.page,
+				limit: validatedPagination.limit,
+				totalPages: Math.ceil(totalCalculations / validatedPagination.limit),
+			},
 		});
-
-		return NextResponse.json({ message: "Dashboard data", calculations });
 	} catch (error) {
-		console.error(error);
-		return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+		return handleApiError(error);
 	}
 }

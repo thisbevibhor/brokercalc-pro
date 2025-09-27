@@ -11,12 +11,15 @@
 	},
 	"dependencies": {
 		"@prisma/client": "^6.16.2",
+		"@types/crypto-js": "^4.2.2",
 		"bcrypt": "^6.0.0",
+		"crypto-js": "^4.2.0",
 		"jsonwebtoken": "^9.0.2",
 		"next": "15.5.4",
 		"prisma": "^6.16.2",
 		"react": "19.1.0",
-		"react-dom": "19.1.0"
+		"react-dom": "19.1.0",
+		"zod": "^4.1.11"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",

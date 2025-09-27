@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TradeType {
+  BUY
+  SELL
+}
+
 model User {
   id             String           @id @default(uuid())
   email          String           @unique
@@ -16,6 +21,8 @@ model User {
   brokerAccounts BrokerAccount[]
   orders         Order[]
   calculations   Calculation[]
+
+  @@index([email])
 }
 
 model BrokerAccount {
@@ -24,29 +31,38 @@ model BrokerAccount {
   userId      String
   brokerName  String
   apiKey      String
-  apiSecret   String
+  apiSecret   String   @default("")
+  encryptedApiSecret String?  // For storing encrypted secrets
   connectedAt DateTime @default(now())
   orders      Order[]
+
+  @@index([userId])
 }
 
 model Order {
-  id        String         @id @default(uuid())
-  user      User           @relation(fields: [userId], references: [id])
-  userId    String
-  broker    BrokerAccount  @relation(fields: [brokerId], references: [id])
-  brokerId  String
-  type      String
-  qty       Float
-  price     Float
-  tradeType String
-  date      DateTime       @default(now())
+  id           String         @id @default(uuid())
+  user         User           @relation(fields: [userId], references: [id])
+  userId       String
+  broker       BrokerAccount  @relation(fields: [brokerId], references: [id])
+  brokerId     String
+  type         String         // Stock symbol
+  qty          Float
+  price        Float
+  tradeType    TradeType
+  isIntraday   Boolean       @default(false)
+  date         DateTime      @default(now())
+  calculations Calculation[]
+
+  @@index([userId])
+  @@index([brokerId])
+  @@index([date])
 }
 
 model Calculation {
   id          String   @id @default(uuid())
   user        User     @relation(fields: [userId], references: [id])
   userId      String
-  orders      String   // JSON string of order IDs
+  orders      Order[]  
   buyTotal    Float
   sellTotal   Float
   buyCharges  Float
@@ -54,4 +70,7 @@ model Calculation {
   grossPL     Float
   netPL       Float
   createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
 }

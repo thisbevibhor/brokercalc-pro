@@ -2,39 +2,58 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { loginSchema } from "@/utils/validation";
+import { handleApiError } from "@/utils/error-handler";
+import { ApiError } from "@/utils/error-handler";
 
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret"; // later set a real secret in .env
+
+if (!process.env.JWT_SECRET) {
+	throw new Error("JWT_SECRET environment variable is not set");
+}
 
 export async function POST(req: Request) {
 	try {
 		const body = await req.json();
-		const { email, password } = body;
 
-		if (!email || !password) {
-			return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
-		}
+		// Validate input
+		const validatedData = loginSchema.parse(body);
+		const { email, password } = validatedData;
 
 		// Find user by email
 		const user = await prisma.user.findUnique({ where: { email } });
 		if (!user) {
-			return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+			throw new ApiError(401, "Invalid email or password");
 		}
 
 		// Compare password
 		const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 		if (!passwordMatch) {
-			return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+			throw new ApiError(401, "Invalid email or password");
 		}
 
 		// Generate JWT
-		const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
-			expiresIn: "1h",
-		});
+		const token = jwt.sign(
+			{
+				userId: user.id,
+				email: user.email,
+			},
+			process.env.JWT_SECRET,
+			{
+				expiresIn: process.env.JWT_EXPIRES_IN || "1h",
+			}
+		);
 
-		return NextResponse.json({ message: "Login successful", token });
+		return NextResponse.json({
+			message: "Login successful",
+			token,
+			user: {
+				id: user.id,
+				email: user.email,
+				createdAt: user.createdAt,
+			},
+		});
 	} catch (error) {
-		console.error(error);
-		return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+		return handleApiError(error);
 	}
 }
