@@ -48,7 +48,8 @@ export async function POST(req: AuthRequest) {
 		let buyCharges = 0;
 		let sellCharges = 0;
 
-		orders.forEach((order) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		orders.forEach((order: any) => {
 			const amount = order.qty * order.price;
 			const brokerName = order.broker?.brokerName as BrokerName;
 

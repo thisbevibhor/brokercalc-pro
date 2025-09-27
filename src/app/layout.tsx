@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import { ClientLayout } from "./client-layout";
 import "./globals.css";
-
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
 	title: "BrokerCalc Pro",
@@ -20,7 +14,12 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={`${geistSans.variable} font-sans`}>
+			<head>
+				<meta name="color-scheme" content="light dark" />
+				<meta name="theme-color" content="#2563EB" media="(prefers-color-scheme: light)" />
+				<meta name="theme-color" content="#3B82F6" media="(prefers-color-scheme: dark)" />
+			</head>
+			<body className="font-sans">
 				<ClientLayout>{children}</ClientLayout>
 			</body>
 		</html>

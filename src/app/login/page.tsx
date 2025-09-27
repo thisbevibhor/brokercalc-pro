@@ -57,10 +57,11 @@ const Form = styled.form`
 
 const ErrorMessage = styled.div`
 	padding: 1rem;
-	background: #fee2e2;
-	color: #991b1b;
+	background: ${({ theme }) => theme.errorBackground};
+	color: ${({ theme }) => theme.text.error};
 	border-radius: 0.5rem;
 	font-size: 0.875rem;
+	border: 1px solid ${({ theme }) => theme.error};
 `;
 
 const Input = styled.input`

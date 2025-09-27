@@ -11,12 +11,16 @@ declare module "styled-components" {
 		border: string;
 		success: string;
 		successHover: string;
+		successBackground: string;
 		error: string;
 		errorHover: string;
+		errorBackground: string;
 		text: {
 			primary: string;
 			secondary: string;
 			inverse: string;
+			success: string;
+			error: string;
 		};
 	}
 }
