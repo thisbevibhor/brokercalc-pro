@@ -3,6 +3,108 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import styled from "styled-components";
+
+const Container = styled.div`
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: ${({ theme }) => theme.background};
+`;
+
+const FormContainer = styled.div`
+	max-width: 28rem;
+	width: 100%;
+	padding: 2rem;
+	background: ${({ theme }) => theme.background};
+	border: 1px solid ${({ theme }) => theme.border};
+	border-radius: 1rem;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+`;
+
+const Title = styled.h2`
+	margin-top: 1.5rem;
+	font-size: 2rem;
+	font-weight: 800;
+	color: ${({ theme }) => theme.text.primary};
+	text-align: center;
+`;
+
+const Subtitle = styled.p`
+	margin-top: 0.5rem;
+	font-size: 0.875rem;
+	color: ${({ theme }) => theme.text.secondary};
+	text-align: center;
+`;
+
+const StyledLink = styled(Link)`
+	color: ${({ theme }) => theme.primary};
+	font-weight: 500;
+	transition: color 0.2s ease;
+
+	&:hover {
+		color: ${({ theme }) => theme.primaryHover};
+	}
+`;
+
+const Form = styled.form`
+	margin-top: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+`;
+
+const ErrorMessage = styled.div`
+	padding: 1rem;
+	background: #fee2e2;
+	color: #991b1b;
+	border-radius: 0.5rem;
+	font-size: 0.875rem;
+`;
+
+const Input = styled.input`
+	width: 100%;
+	padding: 0.75rem 1rem;
+	background: ${({ theme }) => theme.secondary};
+	border: 1px solid ${({ theme }) => theme.border};
+	border-radius: 0.5rem;
+	color: ${({ theme }) => theme.text.primary};
+	font-size: 1rem;
+	transition: all 0.2s ease;
+
+	&:focus {
+		outline: none;
+		border-color: ${({ theme }) => theme.primary};
+		box-shadow: 0 0 0 2px ${({ theme }) => theme.primary}20;
+	}
+
+	&::placeholder {
+		color: ${({ theme }) => theme.text.secondary};
+	}
+`;
+
+const SubmitButton = styled.button`
+	width: 100%;
+	padding: 0.75rem 1.5rem;
+	background: ${({ theme }) => theme.primary};
+	color: ${({ theme }) => theme.text.inverse};
+	border: none;
+	border-radius: 0.5rem;
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background: ${({ theme }) => theme.primaryHover};
+	}
+
+	&:disabled {
+		opacity: 0.7;
+		cursor: not-allowed;
+	}
+`;
 
 export default function SignupPage() {
 	const [email, setEmail] = useState("");

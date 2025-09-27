@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+	// Next.js handles Tailwind CSS processing by default
 };
 
 export default nextConfig;

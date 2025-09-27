@@ -15,22 +15,22 @@
 ## ⚡ Features
 
 ### Implemented
+
 - **Authentication**
   - Secure signup & login with JWT
   - Password hashing with bcrypt
   - Protected API routes with middleware
-  
 - **Broker Integration**
   - Support for Zerodha and Groww
   - Accurate brokerage calculations
   - Detailed charge breakdowns (STT, GST, etc.)
-  
 - **Input Validation**
   - Strong schema validation with Zod
   - Stock symbol format validation
   - Trade input validation (quantity, price, etc.)
 
 ### In Progress
+
 - Stock symbol autocomplete with NSE/BSE data
 - Order management and tracking
 - P&L calculations with broker charges
@@ -38,6 +38,7 @@
 - Tax report generation
 
 ### Planned
+
 - Portfolio analytics and visualization
 - Export functionality (CSV/XLSX)
 - More broker integrations
@@ -112,24 +113,28 @@ src/
 ## 📝 Development Notes
 
 ### API Routes
+
 - All routes under `src/app/api/`
 - Protected by JWT authentication middleware
 - Proper error handling and validation
 - Consistent response format
 
 ### Authentication
+
 - JWT-based with 1-hour expiry
 - Bcrypt for password hashing
 - Protected routes and API endpoints
 - Client-side auth state management
 
 ### Database
+
 - SQLite for development
 - PostgreSQL recommended for production
 - Prisma migrations for schema management
 - Proper indexing on frequently queried fields
 
 ### Validation
+
 - Zod schemas for all inputs
 - Stock symbol format validation
 - Price and quantity validation

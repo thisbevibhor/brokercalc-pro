@@ -1,103 +1,138 @@
-import Image from "next/image";
+"use client";
+
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import styled from "styled-components";
+
+const Hero = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: calc(100vh - 8rem);
+	text-align: center;
+	padding: 2rem;
+`;
+
+const Title = styled.h1`
+	font-size: 3.5rem;
+	font-weight: 800;
+	margin-bottom: 1.5rem;
+	background: linear-gradient(to right, ${({ theme }) => theme.primary}, ${({ theme }) => theme.primaryHover});
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+`;
+
+const Subtitle = styled.p`
+	font-size: 1.25rem;
+	color: ${({ theme }) => theme.text.secondary};
+	max-width: 600px;
+	margin: 0 auto 2rem;
+	line-height: 1.6;
+`;
+
+const ButtonGroup = styled.div`
+	display: flex;
+	gap: 1rem;
+	margin-top: 2rem;
+`;
+
+const PrimaryButton = styled(Link)`
+	background: ${({ theme }) => theme.primary};
+	color: ${({ theme }) => theme.text.inverse};
+	padding: 0.75rem 1.5rem;
+	border-radius: 0.5rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: ${({ theme }) => theme.primaryHover};
+		transform: translateY(-1px);
+	}
+`;
+
+const SecondaryButton = styled(Link)`
+	background: ${({ theme }) => theme.secondary};
+	color: ${({ theme }) => theme.text.primary};
+	padding: 0.75rem 1.5rem;
+	border-radius: 0.5rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	border: 1px solid ${({ theme }) => theme.border};
+
+	&:hover {
+		background: ${({ theme }) => theme.secondaryHover};
+		transform: translateY(-1px);
+	}
+`;
+
+const Features = styled.div`
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 2rem;
+	margin-top: 4rem;
+	width: 100%;
+	max-width: 1200px;
+`;
+
+const FeatureCard = styled.div`
+	background: ${({ theme }) => theme.background};
+	border: 1px solid ${({ theme }) => theme.border};
+	padding: 1.5rem;
+	border-radius: 1rem;
+	transition: all 0.2s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	}
+
+	h3 {
+		color: ${({ theme }) => theme.text.primary};
+		font-size: 1.25rem;
+		font-weight: 600;
+		margin-bottom: 0.75rem;
+	}
+
+	p {
+		color: ${({ theme }) => theme.text.secondary};
+		line-height: 1.6;
+	}
+`;
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+	const { isAuthenticated } = useAuth({ redirectTo: "/dashboard", requireAuth: false });
+	const router = useRouter();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+	if (isAuthenticated) {
+		router.push("/dashboard");
+		return null;
+	}
+
+	return (
+		<Hero>
+			<Title>Brokerage Calculator for Indian Markets</Title>
+			<Subtitle>Calculate brokerage charges, taxes, and P&L across multiple brokers. Track your trades and make informed decisions.</Subtitle>
+			<ButtonGroup>
+				<PrimaryButton href="/signup">Get Started</PrimaryButton>
+				<SecondaryButton href="/login">Sign In</SecondaryButton>
+			</ButtonGroup>
+			<Features>
+				<FeatureCard>
+					<h3>Multiple Brokers</h3>
+					<p>Support for Zerodha and Groww with accurate brokerage calculations</p>
+				</FeatureCard>
+				<FeatureCard>
+					<h3>Detailed Breakdown</h3>
+					<p>See detailed charges including STT, GST, stamp duty, and more</p>
+				</FeatureCard>
+				<FeatureCard>
+					<h3>P&L Tracking</h3>
+					<p>Track your trades and analyze your performance in real-time</p>
+				</FeatureCard>
+			</Features>
+		</Hero>
+	);
 }
