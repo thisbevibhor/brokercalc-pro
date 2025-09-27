@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import styled from "styled-components";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/app/providers";
 import { useAuth } from "@/hooks/useAuth";
 
 const Nav = styled.nav`
@@ -81,13 +81,18 @@ const ThemeToggle = styled.button`
 	align-items: center;
 	gap: 0.5rem;
 
-	&:hover {
+	&:hover:not(:disabled) {
 		background: ${({ theme }) => theme.secondaryHover};
+	}
+	
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
 	}
 `;
 
 export default function Navigation() {
-	const { theme, toggleTheme } = useTheme();
+	const { theme, toggleTheme, isLoading } = useTheme();
 	const { isAuthenticated, logout } = useAuth({ requireAuth: false });
 
 	return (
@@ -117,8 +122,13 @@ export default function Navigation() {
 						</StyledLink>
 					)}
 				</NavLinks>
-				<ThemeToggle onClick={toggleTheme} type="button" aria-label="Toggle theme">
-					{theme === "light" ? "🌙" : "☀️"}
+				<ThemeToggle 
+					onClick={toggleTheme} 
+					type="button" 
+					aria-label="Toggle theme"
+					disabled={isLoading}
+				>
+					{isLoading ? "⏳" : theme === "light" ? "🌙" : "☀️"}
 				</ThemeToggle>
 			</NavGroup>
 		</Nav>

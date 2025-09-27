@@ -86,7 +86,9 @@ const FeatureCard = styled.div`
 
 	&:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		box-shadow: ${({ theme }) => theme.background === "#FFFFFF" 
+			? "0 4px 12px rgba(0, 0, 0, 0.1)" 
+			: "0 4px 12px rgba(0, 0, 0, 0.3)"};
 	}
 
 	h3 {
